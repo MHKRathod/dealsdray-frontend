@@ -1,1 +1,1 @@
-# dealsdray-frontend
+# organisational-management-structure-frontend
