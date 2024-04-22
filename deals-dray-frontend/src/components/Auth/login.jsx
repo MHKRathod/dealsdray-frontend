@@ -1,72 +1,78 @@
 import "./Auth.css";
+import { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
+import axios from "axios";
 
-export const AuthLogin = () => {
+export const AuthLogin = ({ onLogin }) => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [redirectToDashboard, setRedirectToDashboard] = useState(false);
+    const navigate = useNavigate(); 
 
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post('https://xto10x-24f21250d5a0.herokuapp.com/api/auth/login', {
+                username,
+                password
+            });
+            if (response.status === 200) {
+                // Call onLogin function with username upon successful login
+                onLogin(username); // Pass the username to the onLogin function
+                // Set redirectToDashboard to true to navigate to dashboard
+                setRedirectToDashboard(true);
+            } else {
+                // Handle registration or other cases here if needed
+                console.log('Login failed');
+            }
+        } catch (error) {
+            console.error('Error during login:', error.response?.data?.message || error.message);
+            alert('Incorrect username or password');
+        }
+    };
 
-    // const handleUserNameChange = (e) => {
-    //     authDispatch({
-    //         type: "USERNAME",
-    //         payload: e.target.value
-    //     });
-    // };
+    const handleUsernameChange = (e) => {
+        setUsername(e.target.value);
+    };
 
-    // const handlePasswordChange = (e) => {
-    //     authDispatch({
-    //         type: "PASSWORD",
-    //         payload: e.target.value
-    //     });
-    // };
+    const handlePasswordChange = (e) => {
+        setPassword(e.target.value);
+    };
 
-    // const handleLoginClick = (e) => {
-    //     e.preventDefault();
-    //     const token = loginHandler(username, password);
-    //     if (token) {
-    //         navigate("/");
-    //     }
-    //     authDispatch({
-    //         type: "TOKEN",
-    //         payload: token
-    //     });
-    //     authDispatch({
-    //         type: "CLEAR_CREDENTIALS"
-    //     });
-    // };
+    const handleSignup = () => {
+        navigate('/signup');
+    };
 
-    // const handleTestCredentialsClick = () => {
-    //     const token = loginHandler("prakashsakari", "ps12345");
-    //     authDispatch({
-    //         type: "TOKEN",
-    //         payload: token
-    //     });
-    //     if (token) {
-    //         navigate("/");
-    //     }
-    // };
-
-    console.log("error eroor error");
-        return (
+    return (
         <div className="d-grid">
             <div className="login-auth d-flex direction-column justify-center">
                 <h2 className="auth-title">Login</h2>
-                <form >
+                <form onSubmit={handleLogin}>
                     <div className="form-container">
                         <label className="form-label">Username</label>
-                        <input className="form-input lh-ls" placeholder="prakashsakari"  />
+                        <input className="form-input lh-ls" placeholder="" value={username} onChange={handleUsernameChange}/>
                     </div>
                     <div className="form-container">
                         <label className="form-label">Password</label>
-                        <input className="form-input lh-ls" placeholder="*******"  />
+                        <input
+                            className="form-input lh-ls"
+                            type="password"
+                            placeholder=""
+                            value={password}
+                            onChange={handlePasswordChange}
+                        />
                     </div>
                     <div className="cta">
                         <button className="button login-btn btn-margin cursor sign-up-btn">Login</button>
                     </div>
                 </form>
                 <div>
-                    <button className="button login-btn btn-outline-primary btn-margin sign-up-btn">
-                        Login with Test Credentials
+                    <button className="button login-btn btn-outline-primary btn-margin sign-up-btn" onClick={handleSignup}>
+                        SignUp
                     </button>
                 </div>
             </div>
+            {redirectToDashboard && <Navigate to="/dashboard" />}
         </div>
-    )
-}
+    );
+};

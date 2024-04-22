@@ -5,3 +5,12 @@
 .gap-md {
     gap: 2rem;
 }
+
+
+.welcome-message {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    padding-left: 50%;
+    padding-top: 25%;
+  }
